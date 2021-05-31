@@ -2,6 +2,7 @@ import cv2
 import time
 from flask import Flask, render_template, Response
 from pyzbar.pyzbar import decode, ZBarSymbol
+from service import download_service
 
 app = Flask(__name__)
 
@@ -13,13 +14,12 @@ def read_barcodes(frame1):
         barcode_info = barcode.data.decode('utf-8')
         print("successful")
         print(barcode_info)
+        file = download_service.initiate_download(barcode_info)
+        print(file)
         cv2.rectangle(frame1, (x, y),(x+w, y+h), (0, 255, 0), 2)
         #2
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame1, barcode_info, (x + 6, y - 6), font, 2.0, (255, 255, 255), 1)
-        #3
-        with open("barcode_result.txt", mode ='w') as file:
-            file.write(barcode_info)
         time.sleep(1)
     return frame1
 
